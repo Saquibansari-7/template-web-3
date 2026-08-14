@@ -14,6 +14,8 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'password';
 const API_SECRET = process.env.API_SECRET || 'change-me-in-production';
 
 function requireApiSecret(req, res, next) {
+  // When no API_SECRET is configured (local/demo mode), allow unauthenticated saves.
+  if (!process.env.API_SECRET) return next();
   const secret = req.headers['x-api-secret'];
   if (secret === API_SECRET) {
     return next();

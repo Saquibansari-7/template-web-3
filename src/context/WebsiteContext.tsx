@@ -3,9 +3,9 @@ import { WebsiteContent } from '../types';
 
 export const defaultContent: WebsiteContent = {
   couple: {
-    name1: 'Farhan',
-    name2: 'Mariyaa',
-    hashtag: '#Farhan&Mariyaa',
+    name1: 'Isabel',
+    name2: 'Kevin',
+    hashtag: '#Isabel&Kevin',
   },
   hero: {
     subtitle: 'We are getting married',

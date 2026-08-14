@@ -3,7 +3,7 @@
   "texts": {
     "welcome": "We are so excited to celebrate our love with the people who mean the most to us. Join us for a day filled with laughter, love, and happily ever afters.",
     "story": "It started with a chance encounter at a coffee shop, where Isabel ordered a tea and Kevin spilled his coffee. Nervous laughter turned into a conversation that lasted for hours, and we haven't stopped talking since.\n\nThrough travels, late-night study sessions, and building a home together, our bond only grew stronger. We realized that we weren't just partners; we were best friends ready to take on the world together.\n\nThree years later, under a canopy of autumn leaves, Kevin got down on one knee. With tears of joy and a resounding \"Yes!\", we began this beautiful journey toward our wedding day.",
-    "hashtag": "isabel&kevin"
+    "hashtag": "#isabel&kevin"
   },
   "images": {
     "couple": "https://xbzxtkttrrtlsflceise.supabase.co/storage/v1/object/public/sites/default/1785659980333-t52cmb.png",
@@ -28,43 +28,15 @@
     "bestMan": "Michael"
   },
   "timeline": [
-    {
-      "icon": "fas fa-church",
-      "time": "10:00 AM",
-      "event": "Ceremony",
-      "description": "Exchange of vows and rings"
-    },
-    {
-      "icon": "fas fa-cocktail",
-      "time": "12:00 PM",
-      "event": "Cocktails",
-      "description": "Drinks and canapes by the garden"
-    },
-    {
-      "icon": "fas fa-utensils",
-      "time": "1:00 PM",
-      "event": "Lunch & Program",
-      "description": "Feast, speeches, and dancing"
-    },
-    {
-      "icon": "fas fa-birthday-cake",
-      "time": "3:30 PM",
-      "event": "Cake Cutting",
-      "description": "Sweet beginnings"
-    },
-    {
-      "icon": "fas fa-door-open",
-      "time": "5:00 PM",
-      "event": "Farewell",
-      "description": "Grand exit send-off"
-    }
+    { "icon": "fas fa-church", "time": "10:00 AM", "event": "Ceremony", "description": "Exchange of vows and rings" },
+    { "icon": "fas fa-cocktail", "time": "12:00 PM", "event": "Cocktails", "description": "Drinks and canapes by the garden" },
+    { "icon": "fas fa-utensils", "time": "1:00 PM", "event": "Lunch & Program", "description": "Feast, speeches, and dancing" },
+    { "icon": "fas fa-birthday-cake", "time": "3:30 PM", "event": "Cake Cutting", "description": "Sweet beginnings" },
+    { "icon": "fas fa-door-open", "time": "5:00 PM", "event": "Farewell", "description": "Grand exit send-off" }
   ],
   "frontNames": "ISABEL & KEVIN",
   "endNames": "ISABEL & KEVIN",
-  "locationCoords": {
-    "latitude": "",
-    "longitude": ""
-  },
+  "locationCoords": { "latitude": "", "longitude": "" },
   "footer": {
     "text": "jjjjjjjjjjjjjjjjjjjjjj",
     "image": "https://xbzxtkttrrtlsflceise.supabase.co/storage/v1/object/public/sites/default/1785661385231-gvzne5.png"
