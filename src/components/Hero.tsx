@@ -67,7 +67,7 @@ export default function Hero({ content }: { content: WebsiteContent }) {
       <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/black-paper.png')]" />
 
       <div className="container mx-auto px-4 relative z-10 text-center">
-        <div className="mb-8 animate-float-">
+        <div className="mb-8 animate-float">
           <p className="font-script text-3xl md:text-5xl text-blush mb-2">{content.hero.subtitle}</p>
           <h2 className="text-xl md:text-2xl tracking-[0.3em] uppercase border-t border-b border-blush/50 inline-block py-2 px-8">
             {content.saveTheDate.heading}

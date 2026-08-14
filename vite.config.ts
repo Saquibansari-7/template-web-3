@@ -93,6 +93,41 @@ const devDataApi = {
                 ...existing.footer,
                 text: websiteContent?.footer?.text || existing.footer?.text || '',
                 image: websiteContent?.footer?.image || existing.footer?.image || '',
+                date: websiteContent?.footer?.date || existing.footer?.date || '',
+                tagline: websiteContent?.footer?.tagline || existing.footer?.tagline || '',
+                socials: websiteContent?.footer?.socials || existing.footer?.socials || { instagram: '', x: '', facebook: '' },
+              },
+              rsvp: websiteContent?.rsvp || existing.rsvp || { heading: '', deadline: '', whatsapp: '' },
+              gallery: websiteContent?.gallery || existing.gallery || { enabled: false, images: [] },
+              saveTheDate: websiteContent?.saveTheDate || existing.saveTheDate || { heading: '', quote: '' },
+              hero: {
+                ...existing.hero,
+                subtitle: websiteContent?.hero?.subtitle || existing.hero?.subtitle || '',
+                date: websiteContent?.hero?.date || existing.hero?.date || '',
+                location: websiteContent?.hero?.location || existing.hero?.location || '',
+                image: websiteContent?.hero?.image || existing.hero?.image || '',
+              },
+              events: {
+                ...existing.events,
+                ceremony: {
+                  ...existing.events?.ceremony,
+                  time: websiteContent?.events?.ceremony?.time || existing.events?.ceremony?.time || '',
+                  venue: websiteContent?.events?.ceremony?.venue || existing.events?.ceremony?.venue || '',
+                  location: websiteContent?.events?.ceremony?.location || existing.events?.ceremony?.location || '',
+                  mapCoords:
+                    websiteContent?.events?.ceremony?.mapCoords ||
+                    existing.events?.ceremony?.mapCoords || { latitude: '', longitude: '' },
+                },
+                reception: {
+                  ...existing.events?.reception,
+                  time: websiteContent?.events?.reception?.time || existing.events?.reception?.time || '',
+                  venue: websiteContent?.events?.reception?.venue || existing.events?.reception?.venue || '',
+                  location: websiteContent?.events?.reception?.location || existing.events?.reception?.location || '',
+                },
+                mapLocation:
+                  websiteContent?.events?.mapLocation ||
+                  existing.events?.mapLocation || { address: '', city: '', region: '', mapUrl: '' },
+                menuImage: websiteContent?.events?.menuImage || existing.events?.menuImage || '',
               },
             };
             fs.writeFileSync(path.join(root, 'data.json'), JSON.stringify(flat, null, 2));

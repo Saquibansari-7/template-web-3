@@ -44,7 +44,7 @@ app.post('/api/update-data', requireApiSecret, (req, res) => {
       weddingDate: websiteContent?.countdown?.targetDate || websiteContent?.hero?.date || existingData.weddingDate,
       texts: {
         ...existingData.texts,
-        welcome: websiteContent?.quote?.text || existingData.texts?.welcome || '',
+        welcome: websiteContent?.quote?.text || websiteContent?.texts?.welcome || existingData.texts?.welcome || '',
         story: [websiteContent?.story?.paragraph1, websiteContent?.story?.paragraph2].filter(Boolean).join('\n\n') || existingData.texts?.story || '',
         hashtag: websiteContent?.couple?.hashtag || existingData.texts?.hashtag || ''
       },
@@ -80,7 +80,38 @@ app.post('/api/update-data', requireApiSecret, (req, res) => {
       footer: {
         ...existingData.footer,
         text: websiteContent?.footer?.text || existingData.footer?.text || '',
-        image: websiteContent?.footer?.image || existingData.footer?.image || ''
+        image: websiteContent?.footer?.image || existingData.footer?.image || '',
+        date: websiteContent?.footer?.date || existingData.footer?.date || '',
+        tagline: websiteContent?.footer?.tagline || existingData.footer?.tagline || '',
+        socials: websiteContent?.footer?.socials || existingData.footer?.socials || { instagram: '', x: '', facebook: '' }
+      },
+      rsvp: websiteContent?.rsvp || existingData.rsvp || { heading: '', deadline: '', whatsapp: '' },
+      gallery: websiteContent?.gallery || existingData.gallery || { enabled: false, images: [] },
+      saveTheDate: websiteContent?.saveTheDate || existingData.saveTheDate || { heading: '', quote: '' },
+      hero: {
+        ...existingData.hero,
+        subtitle: websiteContent?.hero?.subtitle || existingData.hero?.subtitle || '',
+        date: websiteContent?.hero?.date || existingData.hero?.date || '',
+        location: websiteContent?.hero?.location || existingData.hero?.location || '',
+        image: websiteContent?.hero?.image || existingData.hero?.image || ''
+      },
+      events: {
+        ...existingData.events,
+        ceremony: {
+          ...existingData.events?.ceremony,
+          time: websiteContent?.events?.ceremony?.time || existingData.events?.ceremony?.time || '',
+          venue: websiteContent?.events?.ceremony?.venue || existingData.events?.ceremony?.venue || '',
+          location: websiteContent?.events?.ceremony?.location || existingData.events?.ceremony?.location || '',
+          mapCoords: websiteContent?.events?.ceremony?.mapCoords || existingData.events?.ceremony?.mapCoords || { latitude: '', longitude: '' }
+        },
+        reception: {
+          ...existingData.events?.reception,
+          time: websiteContent?.events?.reception?.time || existingData.events?.reception?.time || '',
+          venue: websiteContent?.events?.reception?.venue || existingData.events?.reception?.venue || '',
+          location: websiteContent?.events?.reception?.location || existingData.events?.reception?.location || ''
+        },
+        mapLocation: websiteContent?.events?.mapLocation || existingData.events?.mapLocation || { address: '', city: '', region: '', mapUrl: '' },
+        menuImage: websiteContent?.events?.menuImage || existingData.events?.menuImage || ''
       }
     };
 

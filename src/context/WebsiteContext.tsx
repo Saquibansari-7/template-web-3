@@ -1,4 +1,3 @@
-import { createContext, useContext } from 'react';
 import { WebsiteContent } from '../types';
 
 export const defaultContent: WebsiteContent = {
@@ -91,15 +90,3 @@ export const defaultContent: WebsiteContent = {
     { event: 'Farewell', description: 'Grand exit send-off', time: '5:00 PM', icon: 'fas fa-door-open' },
   ],
 };
-
-interface WebsiteContextValue {
-  content: WebsiteContent;
-  setContent: (content: WebsiteContent) => void;
-}
-
-export const WebsiteContext = createContext<WebsiteContextValue>({
-  content: defaultContent,
-  setContent: () => {},
-});
-
-export const useWebsite = () => useContext(WebsiteContext);

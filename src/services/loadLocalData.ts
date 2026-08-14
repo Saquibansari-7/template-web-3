@@ -1,5 +1,6 @@
 import { WebsiteContent } from '../types';
 import { defaultContent } from '../context/WebsiteContext';
+import type { MapLocation, Rsvp, Socials } from '../types';
 
 interface LegacyContent {
   weddingDate: string;
@@ -12,7 +13,23 @@ interface LegacyContent {
   frontNames?: string;
   endNames?: string;
   locationCoords?: { latitude?: string; longitude?: string };
-  footer?: { text?: string; image?: string };
+  footer?: {
+    text?: string;
+    image?: string;
+    date?: string;
+    tagline?: string;
+    socials?: Socials;
+  };
+  rsvp?: Rsvp;
+  gallery?: { enabled?: boolean; images?: string[] };
+  saveTheDate?: { heading?: string; quote?: string };
+  hero?: { subtitle?: string; date?: string; location?: string; image?: string };
+  events?: {
+    ceremony?: { time?: string; venue?: string; location?: string; mapCoords?: { latitude?: string; longitude?: string } };
+    reception?: { time?: string; venue?: string; location?: string };
+    mapLocation?: MapLocation;
+    menuImage?: string;
+  };
 }
 
 function splitNames(value?: string): [string, string] {
@@ -40,13 +57,15 @@ function mapToContent(raw: LegacyContent): WebsiteContent {
     },
     hero: {
       ...defaultContent.hero,
-      date: raw.weddingDate || defaultContent.hero.date,
-      location: raw.ceremony?.address || '',
+      subtitle: raw.hero?.subtitle || defaultContent.hero.subtitle,
+      date: raw.hero?.date || raw.weddingDate || defaultContent.hero.date,
+      location: raw.hero?.location || raw.ceremony?.address || '',
       image: raw.images?.couple || '',
     },
     saveTheDate: {
       ...defaultContent.saveTheDate,
-      heading: 'Save the Date',
+      heading: raw.saveTheDate?.heading || 'Save the Date',
+      quote: raw.saveTheDate?.quote || '',
     },
     countdown: {
       ...defaultContent.countdown,
@@ -64,24 +83,26 @@ function mapToContent(raw: LegacyContent): WebsiteContent {
     },
     events: {
       ceremony: {
-        time: (raw.ceremony?.time || '').trim() || defaultContent.events.ceremony.time,
-        venue: (raw.ceremony?.location || '').trim() || defaultContent.events.ceremony.venue,
-        location: (raw.ceremony?.address || '').trim() || defaultContent.events.ceremony.location,
+        time: (raw.events?.ceremony?.time || raw.ceremony?.time || '').trim() || defaultContent.events.ceremony.time,
+        venue: (raw.events?.ceremony?.venue || raw.ceremony?.location || '').trim() || defaultContent.events.ceremony.venue,
+        location: (raw.events?.ceremony?.location || raw.ceremony?.address || '').trim() || defaultContent.events.ceremony.location,
         mapCoords: {
-          latitude: raw.locationCoords?.latitude || '',
-          longitude: raw.locationCoords?.longitude || '',
+          latitude: raw.events?.ceremony?.mapCoords?.latitude || raw.locationCoords?.latitude || '',
+          longitude: raw.events?.ceremony?.mapCoords?.longitude || raw.locationCoords?.longitude || '',
         },
       },
       reception: {
-        time: (raw.reception?.time || '').trim() || defaultContent.events.reception.time,
-        venue: (raw.reception?.location || '').trim() || defaultContent.events.reception.venue,
-        location: (raw.reception?.address || '').trim() || defaultContent.events.reception.location,
+        time: (raw.events?.reception?.time || raw.reception?.time || '').trim() || defaultContent.events.reception.time,
+        venue: (raw.events?.reception?.venue || raw.reception?.location || '').trim() || defaultContent.events.reception.venue,
+        location: (raw.events?.reception?.location || raw.reception?.address || '').trim() || defaultContent.events.reception.location,
       },
-      mapLocation: defaultContent.events.mapLocation,
-      menuImage: raw.images?.menu || '',
+      mapLocation: raw.events?.mapLocation || defaultContent.events.mapLocation,
+      menuImage: raw.events?.menuImage || raw.images?.menu || '',
     },
-    gallery: defaultContent.gallery,
-    rsvp: defaultContent.rsvp,
+    gallery: raw.gallery && Array.isArray(raw.gallery.images)
+      ? { enabled: !!raw.gallery.enabled, images: raw.gallery.images }
+      : defaultContent.gallery,
+    rsvp: raw.rsvp || defaultContent.rsvp,
     entourage: {
       parents: parents.join(' / ') || defaultContent.entourage.parents,
       sponsors: sponsors.join(', ') || defaultContent.entourage.sponsors,
@@ -92,6 +113,9 @@ function mapToContent(raw: LegacyContent): WebsiteContent {
       ...defaultContent.footer,
       text: raw.footer?.text || '',
       image: raw.footer?.image || raw.images?.final || '',
+      date: raw.footer?.date || '',
+      tagline: raw.footer?.tagline || '',
+      socials: raw.footer?.socials || defaultContent.footer.socials,
     },
     invitationCard: {
       image: raw.images?.final || '',
