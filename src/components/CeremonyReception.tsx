@@ -12,8 +12,6 @@ export default function CeremonyReception({
   const ceremony = content.events?.ceremony ?? { time: '', venue: '', location: '', mapCoords: { latitude: '', longitude: '' } };
   const reception = content.events?.reception ?? { time: '', venue: '', location: '', mapCoords: { latitude: '', longitude: '' } };
   const dateObj = new Date(content.countdown.targetDate || content.hero.date);
-  const localeDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
   return (
     <section id="rsvp" className="bg-dark text-white py-24 min-h-screen flex items-center">
       <div className="container mx-auto px-6">
