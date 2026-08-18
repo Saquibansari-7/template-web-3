@@ -47,8 +47,9 @@ export default function Site({ content }: { content: WebsiteContent }) {
   }, []);
 
   const openMap = useCallback(() => {
-    const { latitude, longitude } = content.events.ceremony.mapCoords || { latitude: '', longitude: '' };
-    const address = content.events.ceremony.location;
+    const ceremony = content.events?.ceremony ?? { time: '', venue: '', location: '', mapCoords: { latitude: '', longitude: '' } };
+    const { latitude, longitude } = ceremony.mapCoords || { latitude: '', longitude: '' };
+    const address = ceremony.location;
     let url: string;
     if (latitude && longitude) {
       url = `https://www.google.com/maps?q=${encodeURIComponent(latitude)},${encodeURIComponent(longitude)}&z=17&output=embed`;

@@ -33,13 +33,13 @@ export const defaultContent: WebsiteContent = {
       time: '11:00 AM',
       venue: 'The Grand Chapel',
       location: '123 Love Avenue, City of Romance',
-      mapCoords: undefined,
+      mapCoords: { latitude: '', longitude: '' },
     },
     reception: {
       time: '1:00 PM onwards',
       venue: 'The Rose Garden Estate',
       location: '456 Sunset Blvd, City of Romance',
-      mapCoords: undefined,
+      mapCoords: { latitude: '', longitude: '' },
     },
     mapLocation: {
       address: '',

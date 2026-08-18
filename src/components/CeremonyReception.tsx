@@ -9,6 +9,8 @@ export default function CeremonyReception({
   onViewMap: () => void;
   onViewMenu: () => void;
 }) {
+  const ceremony = content.events?.ceremony ?? { time: '', venue: '', location: '', mapCoords: { latitude: '', longitude: '' } };
+  const reception = content.events?.reception ?? { time: '', venue: '', location: '', mapCoords: { latitude: '', longitude: '' } };
   const dateObj = new Date(content.countdown.targetDate || content.hero.date);
   const localeDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -19,10 +21,9 @@ export default function CeremonyReception({
           <div className="w-full md:w-1/2 p-12 text-center border-r border-gray-700 bg-burgundy">
             <h3 className="font-display text-3xl uppercase tracking-widest mb-6">Ceremony</h3>
             <div className="space-y-4 font-serif text-lg text-gray-200 mb-8">
-              <p className="font-bold text-white">{content.events.ceremony.venue}</p>
-              <p>{content.events.ceremony.location}</p>
-              <p>{localeDate}</p>
-              <p>{content.events.ceremony.time}</p>
+              <p className="font-bold text-white">{ceremony.venue}</p>
+              <p>{ceremony.location}</p>
+              <p>{ceremony.time}</p>
             </div>
             <button
               onClick={onViewMap}
@@ -40,10 +41,9 @@ export default function CeremonyReception({
 
             <h3 className="font-display text-3xl uppercase tracking-widest mb-6 relative z-10">Reception</h3>
             <div className="space-y-4 font-serif text-lg text-gray-200 mb-8 relative z-10">
-              <p className="font-bold text-white">{content.events.reception.venue}</p>
-              <p>{content.events.reception.location}</p>
-              <p>{localeDate}</p>
-              <p>{content.events.reception.time}</p>
+              <p className="font-bold text-white">{reception.venue}</p>
+              <p>{reception.location}</p>
+              <p>{reception.time}</p>
             </div>
             <button
               onClick={onViewMenu}
