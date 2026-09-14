@@ -1,6 +1,30 @@
-import { supabase } from '../lib/supabase';
 import { WebsiteContent } from '../types';
 import { normalizeImage } from '../utils/imageUrl';
+import { defaultContent } from '../context/WebsiteContext';
+import { resolveSite, type SiteRow } from '../lib/siteResolver';
+import { supabase } from '../lib/supabase';
+
+function mergeDeep<T>(target: T, source: Partial<T>): T {
+  const result = { ...target };
+  for (const key in source) {
+    if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+    const srcVal = source[key];
+    const tgtVal = result[key];
+    if (
+      srcVal &&
+      typeof srcVal === 'object' &&
+      !Array.isArray(srcVal) &&
+      tgtVal &&
+      typeof tgtVal === 'object' &&
+      !Array.isArray(tgtVal)
+    ) {
+      result[key] = mergeDeep(tgtVal as any, srcVal as any);
+    } else {
+      result[key] = srcVal as any;
+    }
+  }
+  return result;
+}
 
 export async function loadContent(siteId: string) {
   if (!supabase || typeof supabase.from !== 'function') {
@@ -56,3 +80,31 @@ export async function loadContent(siteId: string) {
   }
   return sanitized;
 }
+
+export interface LoadContentByCustomerResult {
+  site: SiteRow;
+  content: WebsiteContent;
+}
+
+export async function loadContentByCustomer(customer: string): Promise<LoadContentByCustomerResult | null> {
+  const url = import.meta.env.VITE_PUBLIC_SUPABASE_URL?.trim();
+  const key = import.meta.env.VITE_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
+  if (!url || !key) return null;
+
+  const site = await resolveSite(customer, url, key);
+  if (!site || !site.data) return null;
+
+  const raw = site.data as Partial<WebsiteContent>;
+  const merged = mergeDeep(defaultContent, raw);
+
+  const sanitized: WebsiteContent = {
+    ...merged,
+    hero: { ...merged.hero, image: normalizeImage(merged.hero.image) },
+    story: { ...merged.story, image: normalizeImage(merged.story.image) },
+    invitationCard: { ...merged.invitationCard, image: normalizeImage(merged.invitationCard.image) },
+    gallery: { ...merged.gallery, images: Array.isArray(merged.gallery.images) ? merged.gallery.images.map(normalizeImage) : [] },
+  };
+
+  return { site, content: sanitized };
+}
+

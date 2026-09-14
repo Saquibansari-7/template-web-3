@@ -3,7 +3,7 @@ import AdminPanel from './components/AdminPanel';
 import AdminLogin from './components/AdminLogin';
 import Site from './components/Site';
 import { WebsiteContent } from './types';
-import { loadContent } from './services/loadContent';
+import { loadContent, loadContentByCustomer, type LoadContentByCustomerResult } from './services/loadContent';
 import { defaultContent } from './context/WebsiteContext';
 import { loadLocalData } from './services/loadLocalData';
 
@@ -29,6 +29,7 @@ export default function App() {
     return path === '/admin' || path.startsWith('/admin/');
   });
   const [content, setContent] = useState<WebsiteContent>(defaultContent);
+  const [site, setSite] = useState<LoadContentByCustomerResult['site'] | null>(null);
   const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('adminAuth') === 'true');
   const [ready, setReady] = useState(false);
 
@@ -36,22 +37,33 @@ export default function App() {
     let cancelled = false;
 
     (async () => {
-      if (adminOpen) {
+      const params = new URLSearchParams(window.location.search);
+      const customer = params.get('customer');
+
+      if (customer && customer.trim()) {
         try {
-          const result = await withTimeout(loadContent('isabel-kevin'), 5000);
-          if (!cancelled && result) setContent(result);
-        } catch {
-          /* keep default content */
-        } finally {
-          setReady(true);
+          const result = await withTimeout(loadContentByCustomer(customer.trim()), 5000);
+          if (!cancelled && result) {
+            setContent(result.content);
+            setSite(result.site);
+            setReady(true);
+            return;
+          }
+        } catch (err) {
+          console.error('[App] customer load failed:', err);
         }
-        return;
+        console.warn('[App] customer not found, using default site');
+      }
+
+      if (adminOpen) {
+        setReady(true);
       }
 
       try {
         const local = await withTimeout(loadLocalData(), 5000);
         if (!cancelled && local) {
           setContent(local);
+          if (!adminOpen) setReady(true);
           return;
         }
       } catch {
@@ -102,6 +114,7 @@ export default function App() {
     return (
       <AdminPanel
         initialContent={content}
+        site={site}
         onClose={() => setAdminOpen(false)}
         onLogout={() => {
           sessionStorage.removeItem('adminAuth');

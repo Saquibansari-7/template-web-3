@@ -45,9 +45,9 @@ export default function Countdown({ content }: { content: WebsiteContent }) {
           </p>
         </div>
 
-        {expired && (
+        {/* {expired && (
           <div className="text-2xl font-bold text-crimson mb-8">HAPPILY EVER AFTER!</div>
-        )}
+        )} */}
 
         <div
           ref={containerRef}

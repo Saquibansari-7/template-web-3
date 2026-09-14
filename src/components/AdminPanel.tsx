@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { WebsiteContent } from '../types';
-import { saveContent } from '../services/saveContent';
+import { saveContent, saveContentToSite } from '../services/saveContent';
 import { uploadImage } from '../services/uploadImage';
 import { defaultContent } from '../context/WebsiteContext';
+import type { SiteRow } from '../lib/siteResolver';
 
 interface AdminPanelProps {
   initialContent: WebsiteContent | null;
+  site: SiteRow | null;
   onClose: () => void;
   onLogout: () => void;
 }
 
-export default function AdminPanel({ initialContent, onClose, onLogout }: AdminPanelProps) {
+export default function AdminPanel({ initialContent, site, onClose, onLogout }: AdminPanelProps) {
   const initContent = initialContent || defaultContent;
   const [content, setContent] = useState<WebsiteContent>({
     ...initContent,
@@ -19,6 +21,8 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeSection, setActiveSection] = useState('couple');
+
+  const customerSiteId = site?.id || 'isabel-kevin';
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -45,7 +49,7 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const url = await uploadImage('isabel-kevin', file);
+      const url = await uploadImage(customerSiteId, file);
       update(path, url || '');
       setMessage({ type: 'success', text: 'Image uploaded successfully' });
     } catch (err: any) {
@@ -59,7 +63,12 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     try {
       const frontNames = `${content.couple.name1} & ${content.couple.name2}`;
       const endNames = `${content.couple.name1} & ${content.couple.name2}`;
-      await saveContent('isabel-kevin', { ...content, frontNames, endNames }, {});
+      const payload = { ...content, frontNames, endNames };
+      if (site) {
+        await saveContentToSite(site.id, payload);
+      } else {
+        await saveContent('isabel-kevin', payload, {});
+      }
       setMessage({ type: 'success', text: 'Content saved successfully!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Save failed' });
@@ -76,7 +85,12 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     try {
       const frontNames = `${reset.couple.name1} & ${reset.couple.name2}`;
       const endNames = `${reset.couple.name1} & ${reset.couple.name2}`;
-      await saveContent('isabel-kevin', { ...reset, frontNames, endNames }, {});
+      const payload = { ...reset, frontNames, endNames };
+      if (site) {
+        await saveContentToSite(site.id, payload);
+      } else {
+        await saveContent('isabel-kevin', payload, {});
+      }
       setMessage({ type: 'success', text: 'All content reset to default' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Reset failed' });
@@ -105,6 +119,13 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     { id: 'footer', label: 'Footer', icon: 'fa-shoe-prints' },
     { id: 'timeline', label: 'Timeline', icon: 'fa-hourglass-end' },
   ];
+
+  const viewSiteHref = (() => {
+    if (typeof window === 'undefined') return '/';
+    const params = new URLSearchParams(window.location.search);
+    const customer = params.get('customer');
+    return customer ? '/?customer=' + encodeURIComponent(customer) : '/';
+  })();
 
   return (
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center sm:items-start justify-center p-3 sm:p-4 overflow-y-auto">
@@ -264,6 +285,14 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
           </div>
 
           <div className="flex flex-wrap gap-4 mt-8 pt-6 border-t border-gray-200">
+            <a
+              href={viewSiteHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-200 hover:bg-gray-300 text-dark font-bold py-3 px-8 rounded-lg transition duration-300"
+            >
+              View Site
+            </a>
             <button
               onClick={handleSave}
               disabled={saving}

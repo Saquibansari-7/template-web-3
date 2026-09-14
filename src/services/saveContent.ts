@@ -54,3 +54,33 @@ export async function saveContent(siteId: string, content: WebsiteContent, secti
 
   return { ok: true };
 }
+
+export async function saveContentToSite(siteId: string, content: WebsiteContent) {
+  const url = import.meta.env.VITE_PUBLIC_SUPABASE_URL?.trim();
+  const key = import.meta.env.VITE_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
+  if (!url || !key) throw new Error('Supabase not configured');
+
+  const normalizedContent: WebsiteContent = {
+    ...content,
+    hero: { ...content.hero, image: normalizeImage(content.hero.image) },
+    story: { ...content.story, image: normalizeImage(content.story.image) },
+    invitationCard: { ...content.invitationCard, image: normalizeImage(content.invitationCard.image) },
+    gallery: { ...content.gallery, images: content.gallery.images.map(normalizeImage) },
+  };
+
+  const res = await fetch(`${url}/rest/v1/sites?id=eq.${encodeURIComponent(siteId)}`, {
+    method: 'PATCH',
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({ data: normalizedContent, updated_at: new Date().toISOString() }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`[saveContentToSite] HTTP ${res.status}: ${text.slice(0, 200)}`);
+  }
+}
