@@ -54,7 +54,7 @@ export default function App() {
 
       if (!cancelled) {
         try {
-          const result = await withTimeout(loadContent('default'), 5000);
+          const result = await withTimeout(loadContent('isabel-kevin'), 5000);
           if (result) setContent(result);
         } catch {
           /* keep default content */
