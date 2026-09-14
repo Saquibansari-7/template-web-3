@@ -35,13 +35,19 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
 
-    // Don't block the admin UI on a slow/failed network call.
-    if (adminOpen) setReady(true);
-
     (async () => {
-      // data.json is the single source of truth for both the public site and
-      // the admin. Load it first; only fall back to Supabase if it's missing
-      // (never as an override, to avoid showing a different/stale record).
+      if (adminOpen) {
+        try {
+          const result = await withTimeout(loadContent('isabel-kevin'), 5000);
+          if (!cancelled && result) setContent(result);
+        } catch {
+          /* keep default content */
+        } finally {
+          setReady(true);
+        }
+        return;
+      }
+
       try {
         const local = await withTimeout(loadLocalData(), 5000);
         if (!cancelled && local) {
