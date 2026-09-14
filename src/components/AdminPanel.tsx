@@ -45,7 +45,7 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const url = await uploadImage('default', file);
+      const url = await uploadImage('isabel-kevin', file);
       update(path, url || '');
       setMessage({ type: 'success', text: 'Image uploaded successfully' });
     } catch (err: any) {
@@ -59,7 +59,7 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     try {
       const frontNames = `${content.couple.name1} & ${content.couple.name2}`;
       const endNames = `${content.couple.name1} & ${content.couple.name2}`;
-      await saveContent('default', { ...content, frontNames, endNames }, {});
+      await saveContent('isabel-kevin', { ...content, frontNames, endNames }, {});
       setMessage({ type: 'success', text: 'Content saved successfully!' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Save failed' });
@@ -76,7 +76,7 @@ export default function AdminPanel({ initialContent, onClose, onLogout }: AdminP
     try {
       const frontNames = `${reset.couple.name1} & ${reset.couple.name2}`;
       const endNames = `${reset.couple.name1} & ${reset.couple.name2}`;
-      await saveContent('default', { ...reset, frontNames, endNames }, {});
+      await saveContent('isabel-kevin', { ...reset, frontNames, endNames }, {});
       setMessage({ type: 'success', text: 'All content reset to default' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Reset failed' });
