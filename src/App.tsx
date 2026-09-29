@@ -7,7 +7,7 @@ import { loadContent, loadContentByCustomer, type LoadContentByCustomerResult } 
 import { defaultContent } from './context/WebsiteContext';
 import { loadLocalData } from './services/loadLocalData';
 
-const EXPECTED_TEMPLATE_ID = 'wedding';
+const EXPECTED_TEMPLATE_ID = 'royal-red';
 
 function withTimeout(promise: Promise<any>, ms: number): Promise<any> {
   return new Promise((resolve, reject) => {
