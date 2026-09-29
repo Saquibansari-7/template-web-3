@@ -56,10 +56,6 @@ export async function saveContent(siteId: string, content: WebsiteContent, secti
 }
 
 export async function saveContentToSite(siteId: string, content: WebsiteContent) {
-  const url = import.meta.env.VITE_PUBLIC_SUPABASE_URL?.trim();
-  const key = import.meta.env.VITE_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
-  if (!url || !key) throw new Error('Supabase not configured');
-
   const normalizedContent: WebsiteContent = {
     ...content,
     hero: { ...content.hero, image: normalizeImage(content.hero.image) },
@@ -68,15 +64,12 @@ export async function saveContentToSite(siteId: string, content: WebsiteContent)
     gallery: { ...content.gallery, images: content.gallery.images.map(normalizeImage) },
   };
 
-  const res = await fetch(`${url}/rest/v1/sites?id=eq.${encodeURIComponent(siteId)}`, {
-    method: 'PATCH',
+  const res = await fetch(`https://weddappvows.vercel.app/api/site/update`, {
+    method: 'POST',
     headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
     },
-    body: JSON.stringify({ data: normalizedContent, updated_at: new Date().toISOString() }),
+    body: JSON.stringify({ siteId, content: normalizedContent }),
   });
 
   if (!res.ok) {

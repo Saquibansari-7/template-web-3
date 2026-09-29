@@ -7,6 +7,8 @@ import { loadContent, loadContentByCustomer, type LoadContentByCustomerResult } 
 import { defaultContent } from './context/WebsiteContext';
 import { loadLocalData } from './services/loadLocalData';
 
+const EXPECTED_TEMPLATE_ID = 'wedding';
+
 function withTimeout(promise: Promise<any>, ms: number): Promise<any> {
   return new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('timeout')), ms);
@@ -23,6 +25,10 @@ function withTimeout(promise: Promise<any>, ms: number): Promise<any> {
   });
 }
 
+function validateCustomer(subdomain: string): boolean {
+  return /^[a-z0-9](?:[a-z0-9-]{0,58}[a-z0-9])?$/.test(subdomain);
+}
+
 export default function App() {
   const [adminOpen, setAdminOpen] = useState(() => {
     const path = window.location.pathname;
@@ -32,6 +38,7 @@ export default function App() {
   const [site, setSite] = useState<LoadContentByCustomerResult['site'] | null>(null);
   const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('adminAuth') === 'true');
   const [ready, setReady] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,9 +48,28 @@ export default function App() {
       const customer = params.get('customer');
 
       if (customer && customer.trim()) {
+        const subdomain = customer.trim().toLowerCase();
+        if (!validateCustomer(subdomain)) {
+          setNotFound(true);
+          setReady(true);
+          return;
+        }
+
         try {
-          const result = await withTimeout(loadContentByCustomer(customer.trim()), 5000);
+          const result = await withTimeout(loadContentByCustomer(subdomain), 5000);
           if (!cancelled && result) {
+            if (result.site.template_id && result.site.template_id !== EXPECTED_TEMPLATE_ID) {
+              console.warn('[App] site template_id mismatch:', result.site.template_id);
+              setNotFound(true);
+              setReady(true);
+              return;
+            }
+            if (result.site.status && result.site.status !== 'active') {
+              console.warn('[App] site status is not active:', result.site.status);
+              setNotFound(true);
+              setReady(true);
+              return;
+            }
             setContent(result.content);
             setSite(result.site);
             setReady(true);
@@ -52,7 +78,9 @@ export default function App() {
         } catch (err) {
           console.error('[App] customer load failed:', err);
         }
-        console.warn('[App] customer not found, using default site');
+        setNotFound(true);
+        setReady(true);
+        return;
       }
 
       if (adminOpen) {
@@ -97,6 +125,14 @@ export default function App() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
+
+  if (notFound) {
+    return (
+      <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#333', fontFamily: 'serif', fontSize: '2rem' }}>
+        404 — Site not found
+      </div>
+    );
+  }
 
   if (adminOpen) {
     if (!authenticated) {

@@ -1,7 +1,7 @@
 import { WebsiteContent } from '../types';
 import { normalizeImage } from '../utils/imageUrl';
 import { defaultContent } from '../context/WebsiteContext';
-import { resolveSite, type SiteRow } from '../lib/siteResolver';
+import type { SiteRow } from '../lib/siteResolver';
 import { supabase } from '../lib/supabase';
 
 function mergeDeep<T>(target: T, source: Partial<T>): T {
@@ -87,11 +87,8 @@ export interface LoadContentByCustomerResult {
 }
 
 export async function loadContentByCustomer(customer: string): Promise<LoadContentByCustomerResult | null> {
-  const url = import.meta.env.VITE_PUBLIC_SUPABASE_URL?.trim();
-  const key = import.meta.env.VITE_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
-  if (!url || !key) return null;
-
-  const site = await resolveSite(customer, url, key);
+  const { resolveSite } = await import('../lib/siteResolver');
+  const site = await resolveSite(customer);
   if (!site || !site.data) return null;
 
   const raw = site.data as Partial<WebsiteContent>;

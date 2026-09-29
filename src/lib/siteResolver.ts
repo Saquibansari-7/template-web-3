@@ -2,24 +2,18 @@ export interface SiteRow {
   id: string;
   subdomain: string;
   data?: Record<string, unknown> | null;
+  template_id?: string;
+  status?: string;
   [key: string]: unknown;
 }
 
-export async function resolveSite(
-  customerSubdomain: string,
-  supabaseUrl: string,
-  supabaseKey: string,
-): Promise<SiteRow | null> {
+export async function resolveSite(customerSubdomain: string): Promise<SiteRow | null> {
   let subdomain = (customerSubdomain || '').trim().toLowerCase();
   if (!subdomain) return null;
 
   subdomain = subdomain.replace(/\/+$/, '');
 
-  const url = supabaseUrl.trim();
-  const key = supabaseKey.trim();
-  if (!url || !key) return null;
-
-  const safe = subdomain.replace(/[^a-zA-Z0-9_-]/g, '');
+  const safe = subdomain.replace(/[^a-z0-9-]/g, '');
   if (safe !== subdomain) {
     console.warn('[siteResolver] stripped invalid chars from subdomain:', subdomain, '->', safe);
     subdomain = safe;
@@ -28,8 +22,7 @@ export async function resolveSite(
 
   try {
     const res = await fetch(
-      `${url}/rest/v1/sites?subdomain=eq.${encodeURIComponent(subdomain)}&select=*&limit=1`,
-      { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      `https://weddappvows.vercel.app/api/site/lookup?customer=${encodeURIComponent(subdomain)}`,
     );
 
     if (!res.ok) {
@@ -37,9 +30,9 @@ export async function resolveSite(
       return null;
     }
 
-    const rows = (await res.json()) as SiteRow[];
-    console.log('[siteResolver] rows returned:', rows.length, 'for', subdomain);
-    return rows[0] ?? null;
+    const site = (await res.json()) as SiteRow;
+    console.log('[siteResolver] site returned for', subdomain, ':', site?.id);
+    return site ?? null;
   } catch (err) {
     console.error('[siteResolver] fetch failed:', err);
     return null;
