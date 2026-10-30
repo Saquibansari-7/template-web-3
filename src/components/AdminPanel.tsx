@@ -140,18 +140,25 @@ export default function AdminPanel({ initialContent, site, onClose, onLogout }: 
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
-          {message && (
-            <div
-              className={`p-4 rounded-lg mb-6 font-serif ${
-                message.type === 'success'
-                  ? 'bg-green-100 text-green-700 border border-green-400'
-                  : 'bg-red-100 text-red-700 border border-red-400'
-              }`}
+        {message && (
+          <div
+            className={`flex-shrink-0 mx-4 sm:mx-6 mt-4 p-4 rounded-lg font-serif flex items-center justify-between shadow-lg ${
+              message.type === 'success'
+                ? 'bg-green-100 text-green-700 border border-green-400'
+                : 'bg-red-100 text-red-700 border border-red-400'
+            }`}
+          >
+            <span>{message.text}</span>
+            <button
+              onClick={() => setMessage(null)}
+              className="ml-4 text-lg font-bold leading-none opacity-60 hover:opacity-100"
             >
-              {message.text}
-            </div>
-          )}
+              ✕
+            </button>
+          </div>
+        )}
+
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
 
           <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 pb-4">
             {sections.map(s => (
