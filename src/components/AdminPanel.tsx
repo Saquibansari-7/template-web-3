@@ -10,9 +10,10 @@ interface AdminPanelProps {
   site: SiteRow | null;
   onClose: () => void;
   onLogout: () => void;
+  onChangePassword: () => void;
 }
 
-export default function AdminPanel({ initialContent, site, onClose, onLogout }: AdminPanelProps) {
+export default function AdminPanel({ initialContent, site, onClose, onLogout, onChangePassword }: AdminPanelProps) {
   const initContent = initialContent || defaultContent;
   const [content, setContent] = useState<WebsiteContent>({
     ...initContent,
@@ -301,7 +302,7 @@ export default function AdminPanel({ initialContent, site, onClose, onLogout }: 
               View Site
             </a>
             <button
-              onClick={onLogout}
+              onClick={onChangePassword}
               className="bg-gray-200 hover:bg-gray-300 text-dark font-bold py-3 px-8 rounded-lg transition duration-300"
             >
               Change admin password

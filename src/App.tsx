@@ -151,7 +151,8 @@ export default function App() {
           initialContent={content}
           site={site}
           onClose={() => setAdminOpen(false)}
-          onLogout={() => {
+          onLogout={() => setPasswordResetKey(k => k + 1)}
+          onChangePassword={() => {
             if (customer) {
               localStorage.removeItem(`admin_pass_${customer}`);
               setPasswordResetKey(k => k + 1);
