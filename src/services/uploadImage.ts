@@ -7,6 +7,11 @@ export async function uploadImage(siteId: string, file: File): Promise<string | 
     throw err;
   }
 
+  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  if (file.size > MAX_SIZE) {
+    throw new Error(`Image must be 5 MB or smaller (current: ${(file.size / 1024 / 1024).toFixed(1)} MB)`);
+  }
+
   const fileExt = file.name.split('.').pop()?.toLowerCase() || 'bin';
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${fileExt}`;
   const filePath = `${siteId}/${fileName}`;
