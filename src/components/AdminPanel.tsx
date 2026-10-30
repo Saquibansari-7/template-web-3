@@ -294,6 +294,12 @@ export default function AdminPanel({ initialContent, site, onClose, onLogout }: 
               View Site
             </a>
             <button
+              onClick={onLogout}
+              className="bg-gray-200 hover:bg-gray-300 text-dark font-bold py-3 px-8 rounded-lg transition duration-300"
+            >
+              Change admin password
+            </button>
+            <button
               onClick={handleSave}
               disabled={saving}
               className="bg-crimson hover:bg-burgundy text-white font-bold py-3 px-8 rounded-lg transition duration-300 disabled:opacity-50"

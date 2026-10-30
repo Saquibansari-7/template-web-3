@@ -38,6 +38,7 @@ export default function App() {
   const [site, setSite] = useState<LoadContentByCustomerResult['site'] | null>(null);
   const [ready, setReady] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [passwordResetKey, setPasswordResetKey] = useState(0);
 
   const customer = (() => {
     const params = new URLSearchParams(window.location.search);
@@ -145,7 +146,7 @@ export default function App() {
     }
 
     return (
-      <AdminPasswordGate customer={customer}>
+      <AdminPasswordGate key={passwordResetKey} customer={customer}>
         <AdminPanel
           initialContent={content}
           site={site}
@@ -153,6 +154,7 @@ export default function App() {
           onLogout={() => {
             if (customer) {
               localStorage.removeItem(`admin_pass_${customer}`);
+              setPasswordResetKey(k => k + 1);
             }
           }}
         />

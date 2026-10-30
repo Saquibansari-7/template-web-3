@@ -76,14 +76,6 @@ export default function AdminPasswordGate({ customer, children }: AdminPasswordG
     setLoading(false);
   }
 
-  function resetPassword() {
-    localStorage.removeItem(storageKey);
-    setPassword("");
-    setConfirm("");
-    setStep("set");
-    setError("");
-  }
-
   if (step === "error") {
     return (
       <div className={styles.gate}>
@@ -96,13 +88,6 @@ export default function AdminPasswordGate({ customer, children }: AdminPasswordG
     return (
       <>
         {children}
-        <button
-          type="button"
-          className={styles.changeLink}
-          onClick={resetPassword}
-        >
-          Change admin password
-        </button>
       </>
     );
   }
@@ -136,13 +121,22 @@ export default function AdminPasswordGate({ customer, children }: AdminPasswordG
               </button>
             </div>
 
-            <input
-              type={showPwd ? "text" : "password"}
-              placeholder="Confirm password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              autoComplete="new-password"
-            />
+            <div className={styles.field}>
+              <input
+                type={showPwd ? "text" : "password"}
+                placeholder="Confirm password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className={styles.toggle}
+                onClick={() => setShowPwd((s) => !s)}
+              >
+                {showPwd ? "Hide" : "Show"}
+              </button>
+            </div>
 
             {master && (
               <p className={styles.hint}>
