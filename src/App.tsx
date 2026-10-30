@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminPanel from './components/AdminPanel';
-import AdminLogin from './components/AdminLogin';
 import Site from './components/Site';
+import AdminPasswordGate from './components/admin-password-gate/AdminPasswordGate.tsx';
 import { WebsiteContent } from './types';
 import { loadContent, loadContentByCustomer, type LoadContentByCustomerResult } from './services/loadContent';
 import { defaultContent } from './context/WebsiteContext';
@@ -36,17 +36,18 @@ export default function App() {
   });
   const [content, setContent] = useState<WebsiteContent>(defaultContent);
   const [site, setSite] = useState<LoadContentByCustomerResult['site'] | null>(null);
-  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem('adminAuth') === 'true');
   const [ready, setReady] = useState(false);
   const [notFound, setNotFound] = useState(false);
+
+  const customer = (() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('customer')?.trim().toLowerCase() || null;
+  })();
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const customer = params.get('customer');
-
       if (customer && customer.trim()) {
         const subdomain = customer.trim().toLowerCase();
         if (!validateCustomer(subdomain)) {
@@ -113,7 +114,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [adminOpen]);
+  }, [adminOpen, customer]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -135,10 +136,6 @@ export default function App() {
   }
 
   if (adminOpen) {
-    if (!authenticated) {
-      return <AdminLogin onLogin={() => setAuthenticated(true)} onClose={() => setAdminOpen(false)} />;
-    }
-
     if (!ready) {
       return (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'sans-serif' }}>
@@ -148,16 +145,18 @@ export default function App() {
     }
 
     return (
-      <AdminPanel
-        initialContent={content}
-        site={site}
-        onClose={() => setAdminOpen(false)}
-        onLogout={() => {
-          sessionStorage.removeItem('adminAuth');
-          setAuthenticated(false);
-          setAdminOpen(false);
-        }}
-      />
+      <AdminPasswordGate customer={customer}>
+        <AdminPanel
+          initialContent={content}
+          site={site}
+          onClose={() => setAdminOpen(false)}
+          onLogout={() => {
+            if (customer) {
+              localStorage.removeItem(`admin_pass_${customer}`);
+            }
+          }}
+        />
+      </AdminPasswordGate>
     );
   }
 
